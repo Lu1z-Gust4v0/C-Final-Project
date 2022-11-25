@@ -75,3 +75,44 @@ int get_next_key(Queue **queue) {
   free(node);
   return key;
 }
+
+int look_next_key(Queue **queue) {
+  return (*queue)->first->key;
+}
+
+int look_next_value(Queue **queue) {
+  return (*queue)->first->value;
+}
+
+Node* get_nth_node(Queue **queue, int position) {
+  Node *ptr;
+  int counter = 0;
+
+  ptr = (*queue)->first;
+  // Since position starts at 1, we have to add 1 to the counter.
+  while (counter + 1 < position) {
+    ptr = ptr->next;
+    counter++;
+  }
+  return ptr;
+}
+
+int look_key_by_position(Queue **queue, int position) {
+  Node *node;
+  // The queue is not inilitialized or position provided exceeds queue length.
+  if (*queue == NULL || queue_length(queue) < position) return -1;
+
+  node = get_nth_node(queue, position);
+
+  return node->key;
+}
+
+int look_value_by_position(Queue **queue, int position) {
+  Node *node;
+  // The queue is not inilitialized or position provided exceeds queue length.
+  if (*queue == NULL || queue_length(queue) < position) return -1;
+  
+  node = get_nth_node(queue, position);
+
+  return node->value;
+}
