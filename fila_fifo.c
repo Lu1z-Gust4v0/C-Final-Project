@@ -52,3 +52,26 @@ int enqueue(Queue **queue, int key, int value) {
   
   return 1;
 }
+
+int get_next_key(Queue **queue) {
+  int key;
+  Node *node;
+  // The queue is not inilitialized or it's empty.
+  if (*queue == NULL || queue_length(queue) == 0) return -1;
+  
+  key = (*queue)->first->key;
+  node = (*queue)->first;
+
+  // Case 1: There is exactly one element in the queue.
+  if (queue_length(queue) == 1) {
+    (*queue)->first = NULL;
+    (*queue)->last = NULL;
+  // Case 2: There is more than one element in the queue.
+  } else if (queue_length(queue) > 1) {
+    (*queue)->first = node->next;
+  }
+  (*queue)->length--;
+  // Free alocated memory for the node.
+  free(node);
+  return key;
+}
