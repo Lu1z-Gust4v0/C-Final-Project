@@ -1,5 +1,5 @@
-#ifndef FILA_FIFO_H
-#define FILA_FIFO_H
+#ifndef QUEUE_H
+#define QUEUE_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,4 +26,4 @@ int look_key_by_position(Queue **queue, int position);
 int look_value_by_position(Queue **queue, int position);
 
 
-#endif /* FILA_FIFO_H */
+#endif /* QUEUE_H */

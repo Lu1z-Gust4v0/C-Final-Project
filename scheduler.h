@@ -1,5 +1,5 @@
-#ifndef ESCALONADOR_H
-#define ESCALONADOR_H
+#ifndef SCHEDULER_H
+#define SCHEDULER_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,4 +24,4 @@ int look_next_client_time(Scheduler* scheduler);
 int config_scheduler(Scheduler* scheduler, char* config_file);
 void run_scheduler(Scheduler* scheduler, char* input_file, char* output_file);
 
-#endif /* ESCALONADOR_H */
+#endif /* SCHEDULER_H */
