@@ -11,10 +11,10 @@ int queue_length(Queue **queue) {
   return (*queue)->length;
 }
 
-int is_duplicated_key(Queue *queue, int key) {
+int is_duplicated_key(Queue **queue, int key) {
   Node* ptr;
 
-  for (ptr = queue->first; ptr != NULL; ptr = ptr->next) {
+  for (ptr = (*queue)->first; ptr != NULL; ptr = ptr->next) {
     if (ptr->key == key) {
       return 1;
     }
@@ -33,7 +33,7 @@ int enqueue(Queue **queue, int key, int value) {
     return 0;
   }
   // Check if the provided key is duplicated
-  if (is_duplicated_key(*queue, key)) return 0;
+  if (is_duplicated_key(queue, key)) return 0;
 
   new_node->key = key;
   new_node->value = value;
@@ -53,15 +53,9 @@ int enqueue(Queue **queue, int key, int value) {
   return 1;
 }
 
-int get_next_key(Queue **queue) {
-  int key;
-  Node *node;
-  // The queue is not inilitialized or it's empty.
-  if (*queue == NULL || queue_length(queue) == 0) return -1;
-  
-  key = (*queue)->first->key;
+void dequeue(Queue **queue) {
+  Node * node;
   node = (*queue)->first;
-
   // Case 1: There is exactly one element in the queue.
   if (queue_length(queue) == 1) {
     (*queue)->first = NULL;
@@ -73,6 +67,17 @@ int get_next_key(Queue **queue) {
   (*queue)->length--;
   // Free alocated memory for the node.
   free(node);
+}
+
+int get_next_key(Queue **queue) {
+  int key;
+  // The queue is not inilitialized or it's empty.
+  if (*queue == NULL || queue_length(queue) == 0) return -1;
+  
+  key = (*queue)->first->key;
+  // Remove node from the queue.
+  dequeue(queue);
+
   return key;
 }
 
