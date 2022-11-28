@@ -1,4 +1,4 @@
-#include "fila_fifo.h"
+#include "queue.h"
 
 void initialize_queue(Queue **queue) {
   *queue = (Queue*) malloc(sizeof(Queue));  
@@ -69,7 +69,7 @@ void dequeue(Queue **queue) {
   free(node);
 }
 
-int get_next_key(Queue **queue) {
+int get_and_delete_next_key(Queue **queue) {
   int key;
   // The queue is not inilitialized or it's empty.
   if (*queue == NULL || queue_length(queue) == 0) return -1;

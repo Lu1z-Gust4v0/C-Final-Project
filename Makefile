@@ -1,6 +1,6 @@
-main: fila_fifo.o main.c
-	gcc fila_fifo.o main.c -o main
-fila_fifo.o: fila_fifo.c
-	gcc -c fila_fifo.c
+main: queue.o main.c
+	gcc queue.o main.c -o main
+queue.o: queue.c
+	gcc -c queue.c
 clean: 
 	rm -rf *.o

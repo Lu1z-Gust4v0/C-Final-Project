@@ -18,7 +18,7 @@ typedef struct {
 
 void initialize_queue(Queue **queue);
 int enqueue(Queue **queue, int key, int value);
-int get_next_key(Queue **queue);
+int get_and_delete_next_key(Queue **queue);
 int look_next_key(Queue **queue);
 int look_next_value(Queue **queue);
 int queue_length(Queue **queue);
