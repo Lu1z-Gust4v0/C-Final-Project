@@ -47,3 +47,27 @@ int look_next_queue_to_be_called(Scheduler* scheduler) {
     return 5;
   }
 }
+
+int look_next_account_number(Scheduler* scheduler) { 
+  int queue_num;
+
+  queue_num = look_next_queue_to_be_called(scheduler);
+
+  return look_next_key(&scheduler->queues[queue_num - 1]);
+}
+
+int look_next_operations_count(Scheduler* scheduler) {
+  int queue_num;
+
+  queue_num = look_next_queue_to_be_called(scheduler);
+
+  return look_next_value(&scheduler->queues[queue_num - 1]);
+}
+
+int look_next_client_time(Scheduler* scheduler) {
+  int operations_count;
+
+  operations_count = look_next_operations_count(scheduler);
+
+  return operations_count * scheduler->time_per_operation;
+}
