@@ -72,6 +72,16 @@ int look_next_client_time(Scheduler* scheduler) {
   return operations_count * scheduler->time_per_operation;
 }
 
+int look_clients_count(Scheduler* scheduler) {
+  int i, amount;
+
+  for (i = 0; i < 5; i++) {
+    amount += queue_length(&scheduler->queues[i]);
+  }
+
+  return amount;
+}
+
 int get_and_remove_next_account(Scheduler* scheduler) {
   int account, queue_num;
 
@@ -83,3 +93,4 @@ int get_and_remove_next_account(Scheduler* scheduler) {
 
   return account;
 }
+
