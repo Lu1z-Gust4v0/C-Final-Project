@@ -71,3 +71,18 @@ int look_next_client_time(Scheduler* scheduler) {
 
   return operations_count * scheduler->time_per_operation;
 }
+
+int get_and_remove_next_account(Scheduler* scheduler) {
+  Queue **queue;  
+  int account, queue_num;
+
+  queue_num = look_next_queue_to_be_called(scheduler);
+  queue = &scheduler->queues[queue_num - 1];
+
+  account = get_and_delete_next_key(queue);
+
+  // Increment scheduler iteration
+  scheduler->iteration++;
+
+  return account;
+}
