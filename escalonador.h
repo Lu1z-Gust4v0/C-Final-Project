@@ -24,14 +24,4 @@ int e_consultar_tempo_prox_cliente(Escalonador *e);
 int e_conf_por_arquivo(Escalonador *e, char *nome_arq_conf);
 void e_rodar(Escalonador *e, char *nome_arq_in, char *nome_arq_out);
 
-/* int enqueue_by_class(Scheduler* scheduler, int class_num, int account, int oper_count);
-int get_and_remove_next_account(Scheduler* scheduler);
-int look_next_account_number(Scheduler* scheduler);
-int look_next_operations_count(Scheduler* scheduler);
-int look_next_queue_to_be_called(Scheduler* scheduler);
-int look_clients_count(Scheduler* scheduler);
-int look_next_client_time(Scheduler* scheduler);
-int config_scheduler(Scheduler* scheduler, char* config_file);
-void run_scheduler(Scheduler* scheduler, char* input_file, char* output_file);
- */
 #endif /* SCHEDULER_H */
