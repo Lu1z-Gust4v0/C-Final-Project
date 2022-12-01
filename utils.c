@@ -59,9 +59,19 @@ Cliente* obter_info_cliente(char* buffer) {
 
 	cliente->qntd_opereracoes = atoi(strtok(token_03, " "));
 
-	printf("classe: %s\n", cliente->classe);
-	printf("num conta: %i\n", cliente->num_conta);
-	printf("qntd opertacoes: %i\n", cliente->qntd_opereracoes);
-
 	return cliente;
+}
+
+int obter_classe_num(char* classe) {
+	if (strcmp("Premium", classe) == 0) {
+		return 1;
+	} else if (strcmp("Ouro", classe) == 0) {
+		return 2;
+	} else if (strcmp("Prata", classe) == 0) {
+		return 3;
+	} else if (strcmp("Bronze", classe) == 0) {
+		return 4;
+	} else {
+		return 5;
+	}
 }
