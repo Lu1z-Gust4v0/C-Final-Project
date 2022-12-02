@@ -20,9 +20,11 @@ void e_inicializar(Escalonador *e, int caixas, int delta_t, int n_1, int n_2, in
 }
 
 int e_inserir_por_fila(Escalonador *e, int classe, int num_conta, int qtde_operacoes) {
-  FILA_FIFO **f = &e->filas[classe - 1];
+  int code;
 
-  f_inserir(f, num_conta, qtde_operacoes);
+  code = f_inserir(&e->filas[classe - 1], num_conta, qtde_operacoes);
+  
+  return code;
 }
 
 int e_consultar_prox_fila(Escalonador *e) {
