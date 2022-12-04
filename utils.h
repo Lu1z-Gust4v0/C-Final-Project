@@ -15,6 +15,7 @@ int obter_qntd_caixas(char* buffer);
 int obter_tempo_por_oper(char* buffer);
 int* obter_disc_escalonamento(char* buffer);
 Cliente* obter_info_cliente(char* buffer);
+void free_client_ptr(Cliente *client);
 int obter_classe_num(char* classe);
 
 #endif /* UTILS_H */

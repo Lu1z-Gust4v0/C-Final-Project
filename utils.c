@@ -75,3 +75,8 @@ int obter_classe_num(char* classe) {
 		return 5;
 	}
 }
+
+void free_client_ptr(Cliente *client) {
+  free(client->classe);
+  free(client);
+}
