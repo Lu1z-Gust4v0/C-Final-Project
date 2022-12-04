@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "fila_fifo.h"
+#include "utils.h"
 
 typedef struct {
   int tempo_por_operacao;  
