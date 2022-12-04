@@ -48,10 +48,10 @@ Cliente* obter_info_cliente(char* buffer) {
 
 	cliente = (Cliente*) malloc(sizeof(Cliente));
 	token_01 = strtok(buffer, "-");
-	token_02 = strtok(NULL, "-");
+  token_02 = strtok(NULL, "-");
 	token_03 = strtok(NULL, "-");
 
-	cliente->classe = (char*) malloc(sizeof(char) * (strlen(token_01) + 1));
+	cliente->classe = (char*) malloc(sizeof(char) * (strlen(token_01) + 2));
 	strcpy(cliente->classe, token_01);
 
 	strtok(token_02, " ");
@@ -63,13 +63,13 @@ Cliente* obter_info_cliente(char* buffer) {
 }
 
 int obter_classe_num(char* classe) {
-	if (strcmp("Premium", classe) == 0) {
+	if (strcmp("Premium ", classe) == 0) {
 		return 1;
-	} else if (strcmp("Ouro", classe) == 0) {
+	} else if (strcmp("Ouro ", classe) == 0) {
 		return 2;
-	} else if (strcmp("Prata", classe) == 0) {
+	} else if (strcmp("Prata ", classe) == 0) {
 		return 3;
-	} else if (strcmp("Bronze", classe) == 0) {
+	} else if (strcmp("Bronze ", classe) == 0) {
 		return 4;
 	} else {
 		return 5;
