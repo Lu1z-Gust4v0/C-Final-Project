@@ -26,14 +26,14 @@ int f_inserir(FILA_FIFO **f, int chave, int valor) {
   No *novo_no;
   // The queue was not initialized.
   if (*f == NULL) return 0;
+  // Check if the provided key is duplicated
+  if (is_duplicated_key(f, chave)) return 0;
   // Allocate memory to a new node.
   novo_no = (No*) malloc(sizeof(No));
   if (novo_no == NULL) {
     printf("Failed to allocate memory for a new node.\n");
     return 0;
   }
-  // Check if the provided key is duplicated
-  if (is_duplicated_key(f, chave)) return 0;
 
   novo_no->chave = chave;
   novo_no->valor = valor;
@@ -42,14 +42,13 @@ int f_inserir(FILA_FIFO **f, int chave, int valor) {
   // Case 1: There are no elements in the queue.
   if(f_num_elementos(f) == 0) {
     (*f)->primeiro = novo_no;
-    (*f)->ultimo = novo_no;
   // Case 2: There are elements in the queue. 
   } else {
     (*f)->ultimo->prox = novo_no;
-    (*f)->ultimo = novo_no;
   }  
-  (*f)->tamanho++;
-  
+  (*f)->ultimo = novo_no;
+  (*f)->tamanho++;;
+
   return 1;
 }
 
@@ -82,10 +81,12 @@ int f_obter_proxima_chave (FILA_FIFO **f) {
 }
 
 int f_consultar_proxima_chave(FILA_FIFO **f) {
+  if ((*f)->primeiro == NULL) return 0;
   return (*f)->primeiro->chave;
 }
 
 int f_consultar_proximo_valor(FILA_FIFO **f) {
+  if ((*f)->primeiro == NULL) return 0;
   return (*f)->primeiro->valor;
 }
 
