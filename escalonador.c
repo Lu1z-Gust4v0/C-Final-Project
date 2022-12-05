@@ -29,25 +29,31 @@ int e_consultar_prox_fila(Escalonador *e) {
   int threshold_03 = e->ordem_de_chamada[2] + threshold_02;
   int threshold_04 = e->ordem_de_chamada[3] + threshold_03; 
   int threshold_05 = e->ordem_de_chamada[4] + threshold_04;
-
   int ordem_de_chamada = e->iteracao % threshold_05; 
+  int fila_num;
 
   // Queue 01;
   if (ordem_de_chamada < threshold_01) {
-    return 1;
+    fila_num = 0;
   // Queue 02;
   } else if (ordem_de_chamada < threshold_02) {
-    return 2;
+    fila_num = 1;
   // Queue 03;
   } else if (ordem_de_chamada < threshold_03) {
-    return 3;
+    fila_num = 2;
   // Queue 04;
   } else if (ordem_de_chamada < threshold_04) {
-    return 4;
+    fila_num = 3;
   // Queue 05;
   } else {
-    return 5;
+    fila_num = 4;
   }
+
+  while(f_num_elementos(&e->filas[fila_num]) == 0) {
+    fila_num = (fila_num + 1) % 5;
+  }
+
+  return fila_num;
 }
 
 int e_consultar_prox_num_conta(Escalonador *e) {
@@ -55,7 +61,7 @@ int e_consultar_prox_num_conta(Escalonador *e) {
 
   num_fila = e_consultar_prox_fila(e);
 
-  return f_consultar_proxima_chave(&e->filas[num_fila - 1]);
+  return f_consultar_proxima_chave(&e->filas[num_fila]);
 }
 
 int e_consultar_prox_qtde_oper(Escalonador *e) {
@@ -63,7 +69,7 @@ int e_consultar_prox_qtde_oper(Escalonador *e) {
 
   num_fila = e_consultar_prox_fila(e);
   
-  return f_consultar_proximo_valor(&e->filas[num_fila - 1]);
+  return f_consultar_proximo_valor(&e->filas[num_fila]);
 }
 
 int e_consultar_qtde_clientes(Escalonador *e) {
@@ -88,7 +94,7 @@ int e_obter_prox_num_conta(Escalonador *e) {
   int conta, num_fila;
 
   num_fila = e_consultar_prox_fila(e);
-  conta = f_obter_proxima_chave(&e->filas[num_fila - 1]);
+  conta = f_obter_proxima_chave(&e->filas[num_fila]);
 
   // Increment scheduler iteration
   e->iteracao++;
@@ -100,9 +106,9 @@ int e_conf_por_arquivo(Escalonador *e, char *nome_arq_conf) {
   FILE* file;
   Cliente *cliente;
 	char buffer[100];
-	int qntd_caixas, delta_t, line_count;
+	int qntd_caixas, delta_t, line_count = 0;
 	int* disc;
-  
+
 	file = fopen(nome_arq_conf, "r");
 	if (file == NULL) {
 		printf("[Error] Could not open file '%s'.\n", nome_arq_conf);
@@ -110,23 +116,42 @@ int e_conf_por_arquivo(Escalonador *e, char *nome_arq_conf) {
 	}
 
 	while(fgets(buffer, 100, file)) {
-    if (line_count == 3) {
+    line_count++;
+    if (line_count == 1) {
+			qntd_caixas = obter_qntd_caixas(buffer);
+		} else if (line_count == 2) {
+			delta_t = obter_tempo_por_oper(buffer);
+		} else if (line_count == 3) {
+			disc = obter_disc_escalonamento(buffer);
       e_inicializar(e, qntd_caixas, delta_t, disc[0], disc[1], disc[2], disc[3], disc[4]);
       free(disc);
-    }
-    if (line_count == 0) {
-			qntd_caixas = obter_qntd_caixas(buffer);
-		} else if (line_count == 1) {
-			delta_t = obter_tempo_por_oper(buffer);
-		} else if (line_count == 2) {
-			disc = obter_disc_escalonamento(buffer);
 		} else {
       cliente = obter_info_cliente(buffer);
 			e_inserir_por_fila(e, obter_classe_num(cliente->classe), cliente->num_conta, cliente->qntd_opereracoes);
       free_client_ptr(cliente);
     }
-    line_count++;
 	}
+
+  int counter = 0;
+  int fails = 0;
+  int classe[5] = {0, 0, 0, 0, 0};
+  printf("qntd clientes: %i\n", e_consultar_qtde_clientes(e));
+  while (e_consultar_qtde_clientes(e) != 0) {    
+    classe[e_consultar_prox_fila(e)]++;
+    if (e_obter_prox_num_conta(e) == -1) fails++;
+    counter++;
+  }
+  printf("qntd clientes: %i\n", e_consultar_qtde_clientes(e));
+  printf("counter: %i\n", counter);
+  printf("fails: %i\n", fails);
+
+  for (int i = 0; i < 5; i++) {
+    printf("Classe [%i]: %i\n", i + 1, classe[i]);
+  }
+
+  for (int j = 0; j < 5; j++) {
+    free(e->filas[j]);
+  }
 
 	fclose(file);
   
