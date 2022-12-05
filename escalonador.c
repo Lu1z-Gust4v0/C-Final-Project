@@ -131,28 +131,6 @@ int e_conf_por_arquivo(Escalonador *e, char *nome_arq_conf) {
       free_client_ptr(cliente);
     }
 	}
-
-  int counter = 0;
-  int fails = 0;
-  int classe[5] = {0, 0, 0, 0, 0};
-  printf("qntd clientes: %i\n", e_consultar_qtde_clientes(e));
-  while (e_consultar_qtde_clientes(e) != 0) {    
-    classe[e_consultar_prox_fila(e)]++;
-    if (e_obter_prox_num_conta(e) == -1) fails++;
-    counter++;
-  }
-  printf("qntd clientes: %i\n", e_consultar_qtde_clientes(e));
-  printf("counter: %i\n", counter);
-  printf("fails: %i\n", fails);
-
-  for (int i = 0; i < 5; i++) {
-    printf("Classe [%i]: %i\n", i + 1, classe[i]);
-  }
-
-  for (int j = 0; j < 5; j++) {
-    free(e->filas[j]);
-  }
-
 	fclose(file);
   
   return 1;
