@@ -17,5 +17,6 @@ int* obter_disc_escalonamento(char* buffer);
 Cliente* obter_info_cliente(char* buffer);
 void free_client_ptr(Cliente *client);
 int obter_classe_num(char* classe);
+char* obter_classe(int classe_num);
 
 #endif /* UTILS_H */

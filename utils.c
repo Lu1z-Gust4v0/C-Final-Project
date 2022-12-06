@@ -76,6 +76,26 @@ int obter_classe_num(char* classe) {
 	}
 }
 
+char* obter_classe(int classe_num) {
+	char* classe;
+
+	classe = (char*) malloc(sizeof(char) * (strlen("Premium") + 1));
+
+	if (classe_num == 1) {
+		strcpy(classe, "Premium");
+	}	else if (classe_num == 2) {
+		strcpy(classe, "Ouro");
+	}	else if (classe_num == 3) {
+		strcpy(classe, "Prata");
+	}	else if (classe_num == 4) {
+		strcpy(classe, "Bronze");
+	} else {
+		strcpy(classe, "Leezu");
+	}
+
+	return classe;
+}
+
 void free_client_ptr(Cliente *client) {
   free(client->classe);
   free(client);
