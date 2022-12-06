@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "fila_fifo.h"
+#include "logtree.h"
 #include "utils.h"
 
 typedef struct {
