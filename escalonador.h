@@ -7,11 +7,18 @@
 #include "utils.h"
 
 typedef struct {
-  int tempo_por_operacao;  
-  int caixas;
-  int ordem_de_chamada[5];
-  int iteracao;
+  int atendimentos;
+  int tempo_de_espera;
+} Caixa;
+
+typedef struct {
+  Caixa *caixas;
   FILA_FIFO* filas[5];
+  int tempo_por_operacao;  
+  int qntd_caixas;
+  int ordem_de_chamada[5];
+  int fila_atual;
+  int iteracao;
 } Escalonador;
 
 void e_inicializar(Escalonador *e, int caixas, int delta_t, int n_1, int n_2, int n_3, int n_4, int n_5);
