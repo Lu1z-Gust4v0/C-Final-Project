@@ -139,7 +139,7 @@ int e_conf_por_arquivo(Escalonador *e, char *nome_arq_conf) {
   return 1;
 }
 
-int chamar_cliente(Escalonador *e, FILE* file, int num_caixa, int tempo) {
+int chamar_cliente(FILE* file, Escalonador *e, Log *t, int num_caixa, int tempo) {
   int classe_num, num_conta, num_operacoes, tempo_de_espera;
   char *classe;
 
@@ -150,6 +150,8 @@ int chamar_cliente(Escalonador *e, FILE* file, int num_caixa, int tempo) {
     classe = obter_classe(classe_num);
     num_operacoes = e_consultar_prox_qtde_oper(e);
     num_conta = e_consultar_prox_num_conta(e);
+
+    log_registrar(&t, num_conta, classe_num, tempo, num_caixa, num_operacoes);
 
     fprintf(
       file, 
@@ -168,9 +170,81 @@ int chamar_cliente(Escalonador *e, FILE* file, int num_caixa, int tempo) {
   }
 }
 
+void escrever_chamadas(FILE* file, Escalonador *e, Log *tree, int *tempo) {
+  int qntd_clientes, i;
+  
+  qntd_clientes = e_consultar_qtde_clientes(e);
+
+  while (qntd_clientes != 0) {
+    for (i = 0; i < e->qntd_caixas; i++) {
+      if(qntd_clientes != 0 && chamar_cliente(file, e, tree, i, *tempo)) {
+        e_obter_prox_num_conta(e);
+        qntd_clientes--;
+      };
+    }
+    if (qntd_clientes != 0) *tempo += e->tempo_por_operacao; 
+  }
+}
+
+void escrever_tempo_total(FILE* file, Escalonador *e, int tempo) {
+  int tempo_restante, tempo_total, i;
+  // Get the greatest remaining time.
+  tempo_restante = e->caixas[0].tempo_de_espera;
+  for (i = 0; i < e->qntd_caixas - 1; i++) {
+    if (tempo_restante < e->caixas[i + 1].tempo_de_espera) {
+      tempo_restante = e->caixas[i + 1].tempo_de_espera;
+    }
+  }
+  tempo_total = tempo + tempo_restante;
+
+  fprintf(file, "Tempo total de atendimento: %i minutos.\n", tempo_total);
+}
+
+void escrever_media(FILE* file, Log *t) {
+  int i;
+  char* classe;
+
+  for (i = 0; i < 5; i++) {
+    classe = obter_classe(i + 1);
+    fprintf(
+      file, 
+      "Tempo medio de espera dos %i clientes %s: %.2f\n",
+      log_obter_contagem_por_classe(&t, i + 1),
+      classe,
+      log_media_por_classe(&t, i + 1)
+    );
+    free(classe);
+  }
+
+  for (i = 0; i < 5; i++) {
+    classe = obter_classe(i + 1);
+    fprintf(
+      file, 
+      "Quantidade media de operacoes por cliente %s = %.2f\n",
+      classe,
+      log_media_ops_por_classe(&t, i + 1)
+    );
+    free(classe);
+  }
+}
+
+void escrever_antendimentos(FILE* file, Escalonador *e) {
+  int i;
+  for (i = 0; i < e->qntd_caixas; i++) {
+    fprintf(file, "O caixa de número %i atendeu %i clientes.\n", i + 1, e->caixas[i].atendimentos);  
+  }
+}
+
 void e_rodar(Escalonador *e, char *nome_arq_in, char *nome_arq_out) {
   FILE* file;
-  int qntd_clientes, i, tempo_total, tempo_restante, tempo = 0;
+  Log* tree;
+  int qntd_clientes, i, tempo_total, tempo = 0;
+
+  log_inicializar(&tree);
+  if (tree == NULL) {
+    printf("[Error] Failed to initialize tree.\n");
+    return;
+  }
 
   if (e_conf_por_arquivo(e, nome_arq_in) == 0) {
     printf("[Error] Failed to configure.\n");
@@ -183,33 +257,10 @@ void e_rodar(Escalonador *e, char *nome_arq_in, char *nome_arq_out) {
 		return;
 	}
 
-  qntd_clientes = e_consultar_qtde_clientes(e);
-
-  while (qntd_clientes != 0) {
-    for (i = 0; i < e->qntd_caixas; i++) {
-      if(qntd_clientes != 0 && chamar_cliente(e, file, i, tempo)) {
-        e_obter_prox_num_conta(e);
-        qntd_clientes--;
-      };
-    }
-    if (qntd_clientes != 0) tempo += e->tempo_por_operacao; 
-  }
-
-  // Get the greatest remaining time.
-  tempo_restante = e->caixas[0].tempo_de_espera;
-  for (i = 0; i < e->qntd_caixas - 1; i++) {
-    if (tempo_restante < e->caixas[i + 1].tempo_de_espera) {
-      tempo_restante = e->caixas[i + 1].tempo_de_espera;
-    }
-  }
-  tempo_total = tempo + tempo_restante;
-
-  fprintf(file, "Tempo total de atendimento: %i minutos.\n", tempo_total);
-
-  for (i = 0; i < e->qntd_caixas; i++) {
-    printf("Caixa %i - tempo restante: %i\n", i + 1, e->caixas[i].tempo_de_espera);
-    fprintf(file, "O caixa de número %i atendeu %i clientes.\n", i + 1, e->caixas[i].atendimentos);  
-  }
+  escrever_chamadas(file, e, tree, &tempo);
+  escrever_tempo_total(file, e, tempo);
+  escrever_media(file, tree);
+  escrever_antendimentos(file, e);
 
   fclose(file);
 } 
