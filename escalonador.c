@@ -170,7 +170,7 @@ int chamar_cliente(Escalonador *e, FILE* file, int num_caixa, int tempo) {
 
 void e_rodar(Escalonador *e, char *nome_arq_in, char *nome_arq_out) {
   FILE* file;
-  int qntd_clientes, i, tempo = 0;
+  int qntd_clientes, i, tempo_total, tempo_restante, tempo = 0;
 
   if (e_conf_por_arquivo(e, nome_arq_in) == 0) {
     printf("[Error] Failed to configure.\n");
@@ -192,7 +192,24 @@ void e_rodar(Escalonador *e, char *nome_arq_in, char *nome_arq_out) {
         qntd_clientes--;
       };
     }
-    tempo += e->tempo_por_operacao; 
+    if (qntd_clientes != 0) tempo += e->tempo_por_operacao; 
   }
+
+  // Get the greatest remaining time.
+  tempo_restante = e->caixas[0].tempo_de_espera;
+  for (i = 0; i < e->qntd_caixas - 1; i++) {
+    if (tempo_restante < e->caixas[i + 1].tempo_de_espera) {
+      tempo_restante = e->caixas[i + 1].tempo_de_espera;
+    }
+  }
+  tempo_total = tempo + tempo_restante;
+
+  fprintf(file, "Tempo total de atendimento: %i minutos.\n", tempo_total);
+
+  for (i = 0; i < e->qntd_caixas; i++) {
+    printf("Caixa %i - tempo restante: %i\n", i + 1, e->caixas[i].tempo_de_espera);
+    fprintf(file, "O caixa de número %i atendeu %i clientes.\n", i + 1, e->caixas[i].atendimentos);  
+  }
+
   fclose(file);
 } 
