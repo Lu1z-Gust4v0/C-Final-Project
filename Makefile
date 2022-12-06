@@ -1,9 +1,11 @@
-main: fila_fifo.o escalonador.o utils.o main.c
-	gcc fila_fifo.o escalonador.o utils.o main.c -o main
+main: fila_fifo.o logtree.o escalonador.o utils.o main.c
+	gcc fila_fifo.o logtree.o escalonador.o utils.o main.c -o main
 escalonador.o: escalonador.c
 	gcc -c escalonador.c
 fila_fifo.o: fila_fifo.c
 	gcc -c fila_fifo.c
+logtree.o: logtree.c
+	gcc -c logtree.c
 utils.o: utils.c
 	gcc -c utils.c
 clean: 
