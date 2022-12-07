@@ -9,7 +9,7 @@
 
 typedef struct {
   int atendimentos;
-  int tempo_de_espera;
+  int timer;
 } Caixa;
 
 typedef struct {
