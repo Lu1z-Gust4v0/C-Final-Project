@@ -13,4 +13,4 @@ output.o: output.c
 test: fila_fifo.o logtree.o escalonador.o utils.o output.o main.c
 	gcc fila_fifo.o logtree.o escalonador.o utils.o output.o main.c -o ./tests/main
 clean: 
-	rm -rf *.o
+	rm -rf *.o main ./tests/main
