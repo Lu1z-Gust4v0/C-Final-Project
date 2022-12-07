@@ -15,8 +15,8 @@ do
   fi
 
   echo "---------- Diff - ${NUM} ----------"
-  # cat "./diff/diff-${NUM}.txt"
-    diff "./test-cases/saida-${NUM}.txt" "./output/saida-${NUM}.txt"
+  # cat "./output/diff-${NUM}.txt"
+    diff "../test-cases/saida-${NUM}.txt" "./output/saida-${NUM}.txt"
   echo "----------------------------------"
   echo ""
 done 
