@@ -8757,7 +8757,7 @@ Tempo medio de espera dos 1815 clientes Premium: 14585.63
 Tempo medio de espera dos 1677 clientes Ouro: 18300.97
 Tempo medio de espera dos 1790 clientes Prata: 21605.80
 Tempo medio de espera dos 1717 clientes Bronze: 23489.74
-Tempo medio de espera dos 1755 clientes Comuns: 32957.52
+Tempo medio de espera dos 1755 clientes Leezu: 32957.52
 Quantidade media de operacoes por cliente Premium = 6.11
 Quantidade media de operacoes por cliente Ouro = 6.11
 Quantidade media de operacoes por cliente Prata = 5.97
