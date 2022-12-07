@@ -16,7 +16,7 @@ do
 
   echo "Test - ${NUM}"
   ./main "../test-cases/entrada-${NUM}.txt" "./output/saida-${NUM}.txt"
-  diff -y "../test-cases/saida-${NUM}.txt" "./output/saida-${NUM}.txt" > "./output/diff-${NUM}.txt"
+  diff "../test-cases/saida-${NUM}.txt" "./output/saida-${NUM}.txt" > "./output/diff-${NUM}.txt"
 
 done 
 echo "Tests completed!"
