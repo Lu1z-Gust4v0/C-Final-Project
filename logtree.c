@@ -122,3 +122,20 @@ float log_media_ops_por_classe(Log **l, int classe) {
 		(float) log_obter_contagem_por_classe(l, classe) 
 	);	
 }
+
+void free_folha(TREE_NODE* folha) {
+	
+	if (folha == NULL) return;
+
+	free_folha(folha->direita);
+	free_folha(folha->esquerda);
+
+	free(folha);
+};
+
+void log_free(Log **l) {
+	if ((*l)->raiz == NULL) return;
+	
+	free_folha((*l)->raiz);
+	free((*l));
+}

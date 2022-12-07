@@ -26,4 +26,6 @@ float log_media_ops_por_classe(Log **l, int classe);
 int log_obter_soma_por_classe(Log **l, int classe);
 int log_obter_contagem_por_classe(Log **l, int classe);
 
+void log_free(Log **l);
+
 #endif /* LOG_TREE_H */

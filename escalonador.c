@@ -120,6 +120,7 @@ int e_consultar_tempo_prox_cliente(Escalonador *e) {
 }
 
 int e_conf_por_arquivo(Escalonador *e, char *nome_arq_conf) {
+
   FILE* file;
   Cliente *cliente;
 	char buffer[100];
@@ -180,5 +181,15 @@ void e_rodar(Escalonador *e, char *nome_arq_in, char *nome_arq_out) {
   escrever_media(file, tree);
   escrever_qntd_antedimentos(file, e);
 
+  log_free(&tree);
+  e_free_escalonador(e);
   fclose(file);
 } 
+
+void e_free_escalonador(Escalonador *e) {
+  int i;
+  for (i = 0; i < 5; i++) {
+    free(e->filas[i]);
+  }
+  free(e->caixas);
+}
