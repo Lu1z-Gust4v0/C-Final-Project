@@ -36,35 +36,67 @@ int e_inserir_por_fila(Escalonador *e, int classe, int num_conta, int qtde_opera
 }
 
 int e_consultar_prox_fila(Escalonador *e) {
-  int fila_num = e->fila_atual;
-  int counter = 0;
+  int chamada = e->ordem_de_chamada[e->fila_atual];  
+  int qntd = f_num_elementos(&e->filas[e->fila_atual]);
 
-  while(e->iteracao == e->ordem_de_chamada[fila_num] || f_num_elementos(&e->filas[fila_num]) == 0) {
-    counter++;
-    // Edge case: All remaining elements are from a single class;
-    if (counter == 5) {
-      e->iteracao = 0;
-    }
-    fila_num = (fila_num + 1) % 5;  
+  if (e->iteracao == chamada || qntd == 0) {
+    return (e->fila_atual + 1) % 5;
+  } 
+
+  return e->fila_atual;
+}
+
+int e_obter_prox_num_conta(Escalonador *e) {
+  int conta, fila_anterior, counter;
+
+  fila_anterior = e->fila_atual;
+  counter = 0;
+
+  do {
+    e->fila_atual = e_consultar_prox_fila(e);
+  } while (f_num_elementos(&e->filas[e->fila_atual]) == 0 && ++counter < 5);
+
+  if (fila_anterior != e->fila_atual) {
+    e->iteracao = 0;
   }
 
-  return fila_num;
+  conta = f_obter_proxima_chave(&e->filas[e->fila_atual]);
+  // Increment scheduler iteration
+  if (conta != -1) e->iteracao++;
+  
+  return conta;
 }
 
 int e_consultar_prox_num_conta(Escalonador *e) {
-  int num_fila;
+  int num_fila, num_conta, counter;
 
   num_fila = e_consultar_prox_fila(e);
 
-  return f_consultar_proxima_chave(&e->filas[num_fila]);
+  counter = 0;
+  do {
+    num_conta = f_consultar_proxima_chave(&e->filas[num_fila]);
+    
+    if (num_conta == 0) num_fila = (num_fila + 1) % 5;
+    
+  } while (num_conta == 0 && ++counter < 5); 
+
+  return num_conta;
 }
 
 int e_consultar_prox_qtde_oper(Escalonador *e) {
-  int num_fila;
+  int num_fila, qntd_ops, counter;
 
   num_fila = e_consultar_prox_fila(e);
-  
-  return f_consultar_proximo_valor(&e->filas[num_fila]);
+
+  counter = 0;
+  do {
+    qntd_ops = f_consultar_proximo_valor(&e->filas[num_fila]);
+    
+    if (qntd_ops == 0) num_fila = (num_fila + 1) % 5;
+    
+  } while (qntd_ops == 0 && ++counter < 5); 
+
+  return qntd_ops;
 }
 
 int e_consultar_qtde_clientes(Escalonador *e) {
@@ -84,24 +116,6 @@ int e_consultar_tempo_prox_cliente(Escalonador *e) {
   qntd_operacoes = e_consultar_prox_qtde_oper(e);
 
   return qntd_operacoes * e->tempo_por_operacao;
-}
-
-int e_obter_prox_num_conta(Escalonador *e) {
-  int conta, fila_anterior;
-
-  fila_anterior = e->fila_atual;
-  
-  e->fila_atual = e_consultar_prox_fila(e);
-  if (fila_anterior != e->fila_atual) {
-    e->iteracao = 0;
-  }
-
-  conta = f_obter_proxima_chave(&e->filas[e->fila_atual]);
-  // Increment scheduler iteration
-  if (conta != -1) {
-    e->iteracao++;
-  }
-  return conta;
 }
 
 int e_conf_por_arquivo(Escalonador *e, char *nome_arq_conf) {
@@ -139,27 +153,30 @@ int e_conf_por_arquivo(Escalonador *e, char *nome_arq_conf) {
   return 1;
 }
 
+void escrever_atendimento(FILE* file, Escalonador*e, int tempo, int num_caixa, int num_conta, int num_ops) {
+  char* classe = obter_classe(e->fila_atual + 1);
+  
+  fprintf(
+    file, 
+    "T = %i min: Caixa %i chama da categoria %s cliente da conta %i para realizar %i operacao(oes).\n", 
+    tempo, (num_caixa + 1), classe, num_conta, num_ops
+  );
+  
+  free(classe);
+};
+
 void chamar_cliente(FILE* file, Escalonador *e, Log *t, int num_caixa, int tempo) {
-  int classe_num, num_conta, num_operacoes;
+  int num_conta, num_operacoes;
   char *classe;
 
   e->caixas[num_caixa].timer += e_consultar_tempo_prox_cliente(e);
   e->caixas[num_caixa].atendimentos++;
 
-  classe_num = e_consultar_prox_fila(e) + 1;
-  classe = obter_classe(classe_num);
   num_operacoes = e_consultar_prox_qtde_oper(e);
   num_conta = e_obter_prox_num_conta(e);
 
-  log_registrar(&t, num_conta, classe_num, tempo, num_caixa, num_operacoes);
-
-  fprintf(
-    file, 
-    "T = %i min: Caixa %i chama da categoria %s cliente da conta %i para realizar %i operacao(oes).\n", 
-    tempo, (num_caixa + 1), classe, num_conta, num_operacoes
-  );
-
-  free(classe);
+  log_registrar(&t, num_conta, e->fila_atual + 1, tempo, num_caixa, num_operacoes);
+  escrever_atendimento(file, e, tempo, num_caixa, num_conta, num_operacoes);
 }
 
 void escrever_tempo_total(FILE* file, Escalonador* e, int tempo) {
