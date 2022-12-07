@@ -8,10 +8,10 @@ int main(int argc, char* argv[]) {
 	if (argc != 3) {
 		printf("Missing arguments.\n");
     printf("Correct: './main [arq_in] [arq_out]'\n");
-		return 1;
+		return EXIT_FAILURE;
 	}
 
   e_rodar(&e, argv[1], argv[2]);
 
-	return 0;
+	return EXIT_SUCCESS;
 }
