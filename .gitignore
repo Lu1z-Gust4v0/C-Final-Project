@@ -1,1 +1,4 @@
+# C objects
 *.o
+# test output files
+/tests/output/*.txt
